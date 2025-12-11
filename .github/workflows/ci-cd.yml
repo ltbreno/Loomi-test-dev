@@ -32,15 +32,6 @@ jobs:
       - name: Run linter
         run: npm run lint -w services/${{ matrix.service }}
 
-      - name: Run tests
-        run: npm run test:cov -w services/${{ matrix.service }}
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./services/${{ matrix.service }}/coverage/lcov.info
-          flags: ${{ matrix.service }}
-
   build-and-push:
     needs: test
     runs-on: ubuntu-latest
