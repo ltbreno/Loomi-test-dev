@@ -1,0 +1,119 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+
+export interface TokenPayload {
+  sub: string;
+  email: string;
+  type: 'access' | 'refresh';
+}
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+}
+
+@Injectable()
+export class AuthService {
+  private readonly usersServiceUrl: string;
+
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly httpService: HttpService,
+  ) {
+    this.usersServiceUrl = this.configService.get('USERS_SERVICE_URL') || 'http://localhost:3001';
+  }
+
+  async validateUser(email: string, password: string): Promise<any> {
+    try {
+      // Call users service to validate credentials
+      const response = await firstValueFrom(
+        this.httpService.post(`${this.usersServiceUrl}/api/users/validate`, {
+          email,
+          password,
+        }),
+      );
+      return response.data;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async login(user: any): Promise<AuthTokens> {
+    const payload: TokenPayload = {
+      sub: user.id,
+      email: user.email,
+      type: 'access',
+    };
+
+    const refreshPayload: TokenPayload = {
+      sub: user.id,
+      email: user.email,
+      type: 'refresh',
+    };
+
+    const accessToken = this.jwtService.sign(payload);
+
+    const refreshToken = this.jwtService.sign(refreshPayload, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d',
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async register(userData: any): Promise<any> {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.post(`${this.usersServiceUrl}/api/users`, userData),
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async refresh(refreshToken: string): Promise<AuthTokens> {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      });
+
+      if (payload.type !== 'refresh') {
+        throw new UnauthorizedException('Invalid token type');
+      }
+
+      const newPayload: TokenPayload = {
+        sub: payload.sub,
+        email: payload.email,
+        type: 'access',
+      };
+
+      const refreshPayload: TokenPayload = {
+        sub: payload.sub,
+        email: payload.email,
+        type: 'refresh',
+      };
+
+      const accessToken = this.jwtService.sign(newPayload);
+
+      const newRefreshToken = this.jwtService.sign(refreshPayload, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+        expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d',
+      });
+
+      return {
+        accessToken,
+        refreshToken: newRefreshToken,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+}
