@@ -1,0 +1,63 @@
+{
+
+    "family": "loomi-users-service",
+  
+    "networkMode": "awsvpc",
+  
+    "requiresCompatibilities": [
+  
+      "FARGATE"
+  
+    ],
+  
+    "cpu": "256",
+  
+    "memory": "512",
+  
+    "executionRoleArn": "arn:aws:iam::465040459458:role/ecsTaskExecutionRole",
+  
+    "containerDefinitions": [
+  
+      {
+  
+        "name": "loomi-users-service",
+  
+        "image": "nginx:latest", 
+  
+        "portMappings": [
+  
+          {
+  
+            "containerPort": 3000,
+  
+            "hostPort": 3000,
+  
+            "protocol": "tcp"
+  
+          }
+  
+        ],
+  
+        "essential": true,
+  
+        "logConfiguration": {
+  
+          "logDriver": "awslogs",
+  
+          "options": {
+  
+            "awslogs-group": "/ecs/loomi-users-service",
+  
+            "awslogs-region": "us-east-1",
+  
+            "awslogs-stream-prefix": "ecs"
+  
+          }
+  
+        }
+  
+      }
+  
+    ]
+  
+  }
