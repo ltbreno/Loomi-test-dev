@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { CacheModule } from './cache/cache.module';
 import { KafkaModule } from './kafka/kafka.module';
 import { HealthModule } from './health/health.module';
+import { LimitsModule } from './limits/limits.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { HealthModule } from './health/health.module';
     CacheModule,
     KafkaModule,
     HealthModule,
+    LimitsModule,
   ],
 })
 export class AppModule {}
