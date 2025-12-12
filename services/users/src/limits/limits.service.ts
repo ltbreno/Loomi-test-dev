@@ -202,13 +202,13 @@ export class LimitsService {
     return this.requestRepository.save(request);
   }
 
-  private async calculateDailyUsage(userId: string, date: Date): Promise<number> {
+  private async calculateDailyUsage(_userId: string, _date: Date): Promise<number> {
     // Em produção, isso seria uma query real nas transações
     // SELECT SUM(amount) FROM transactions WHERE senderUserId = ? AND DATE(createdAt) = ?
     return Math.random() * 500; // Simulado
   }
 
-  private async calculateMonthlyUsage(userId: string, monthStart: Date): Promise<number> {
+  private async calculateMonthlyUsage(_userId: string, _monthStart: Date): Promise<number> {
     // Em produção, query real
     return Math.random() * 3000; // Simulado
   }

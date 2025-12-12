@@ -1,11 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
 export enum LimitIncreaseStatus {
   PENDING = 'PENDING',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
-  EXPIRED = 'EXPIRED'
+  EXPIRED = 'EXPIRED',
 }
 
 @Entity('limit_increase_requests')
@@ -34,7 +34,7 @@ export class LimitIncreaseRequest {
   @Column({
     type: 'enum',
     enum: LimitIncreaseStatus,
-    default: LimitIncreaseStatus.PENDING
+    default: LimitIncreaseStatus.PENDING,
   })
   status: LimitIncreaseStatus;
 
