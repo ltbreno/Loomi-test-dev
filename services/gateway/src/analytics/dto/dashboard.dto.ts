@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserData, TransactionData, MonthlySummary, SpendingTrend, LimitsUsage } from '../interfaces/analytics.interface';
+import {
+  UserData,
+  TransactionData,
+  MonthlySummary,
+  SpendingTrend,
+  LimitsUsage,
+} from '../types/analytics.types';
 
 export class DashboardDto {
   @ApiProperty({ description: 'Dados do usuário' })

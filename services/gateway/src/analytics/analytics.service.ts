@@ -1,18 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { UserData, TransactionData, MonthlySummary, SpendingTrend, LimitsUsage } from './interfaces/analytics.interface';
+import {
+  UserData,
+  TransactionData,
+  MonthlySummary,
+  SpendingTrend,
+  LimitsUsage,
+} from './types/analytics.types';
 
 @Injectable()
 export class AnalyticsService {
   constructor(private readonly httpService: HttpService) {}
 
   async getUserDashboard(userId: string) {
-    // Agregação de dados de múltiplos serviços
     const [userData, transactionsData, balanceData] = await Promise.all([
       this.getUserData(userId),
       this.getRecentTransactions(userId),
-      this.getBalanceData(userId)
+      this.getBalanceData(userId),
     ]);
 
     return {
@@ -21,7 +26,7 @@ export class AnalyticsService {
       recentTransactions: transactionsData.slice(0, 5),
       monthlySummary: await this.calculateMonthlySummary(userId),
       spendingTrends: await this.calculateSpendingTrends(userId),
-      limits: await this.getLimitsUsage(userId)
+      limits: await this.getLimitsUsage(),
     };
   }
 
@@ -29,7 +34,7 @@ export class AnalyticsService {
     userId: string,
     startDate: Date,
     endDate: Date,
-    groupBy: 'day' | 'month' | 'category'
+    groupBy: 'day' | 'month' | 'category',
   ) {
     const transactions = await this.getAllTransactions(userId, startDate, endDate);
 
@@ -49,44 +54,41 @@ export class AnalyticsService {
     const transactions = await this.getAllTransactions(
       userId,
       new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 dias
-      new Date()
+      new Date(),
     );
 
     // Categorização automática baseada em descrição
-    const categories = {
-      'Alimentação': ['restaurante', 'mercado', 'supermercado', 'ifood', 'padaria', 'lanchonete'],
-      'Transporte': ['uber', 'taxi', 'combustivel', 'estacionamento', 'metro', 'onibus'],
-      'Lazer': ['cinema', 'teatro', 'show', 'evento', 'academia', 'esporte'],
-      'Saúde': ['farmacia', 'medico', 'dentista', 'hospital', 'plano', 'exame'],
-      'Educação': ['curso', 'livro', 'material', 'faculdade', 'escola'],
-      'Compras': ['shopping', 'loja', 'roupas', 'eletro', 'moveis'],
-      'Serviços': ['conta', 'luz', 'agua', 'telefone', 'internet', 'gas'],
-      'Outros': []
-    };
+    const categories = this.getCategoriesMapping();
 
-    const categorized = transactions.reduce((acc, transaction) => {
-      const category = this.categorizeTransaction(transaction.description, categories);
-      if (!acc[category]) acc[category] = { total: 0, count: 0 };
-      acc[category].total += parseFloat(transaction.amount.toString());
-      acc[category].count += 1;
-      return acc;
-    }, {} as Record<string, { total: number; count: number }>);
+    const categorized = transactions.reduce(
+      (acc, transaction) => {
+        const category = this.categorizeTransaction(transaction.description, categories);
+        if (!acc[category]) acc[category] = { total: 0, count: 0 };
+        acc[category].total += parseFloat(transaction.amount.toString());
+        acc[category].count += 1;
+        return acc;
+      },
+      {} as Record<string, { total: number; count: number }>,
+    );
 
-    const totalSpent = Object.values(categorized).reduce((sum, cat) => sum + cat.total, 0);
+    const totalSpent = Object.values(categorized).reduce(
+      (sum: number, cat: { total: number; count: number }) => sum + cat.total,
+      0,
+    );
 
-    return Object.entries(categorized).map(([category, data]: [string, any]) => ({
+    return Object.entries(categorized).map(([category, data]) => ({
       category,
       total: data.total,
       count: data.count,
       percentage: totalSpent > 0 ? (data.total / totalSpent) * 100 : 0,
-      trend: 'stable' // TODO: implementar cálculo de tendência
+      trend: 'stable' as const, // TODO: implementar cálculo de tendência
     }));
   }
 
   private async getUserData(userId: string): Promise<UserData> {
     try {
       const response = await firstValueFrom(
-        this.httpService.get(`http://users-service:3001/api/users/${userId}`)
+        this.httpService.get(`http://users-service:3001/api/users/${userId}`),
       );
       return response.data;
     } catch (error) {
@@ -98,7 +100,9 @@ export class AnalyticsService {
   private async getRecentTransactions(userId: string): Promise<TransactionData[]> {
     try {
       const response = await firstValueFrom(
-        this.httpService.get(`http://transactions-service:3002/api/transactions/user/${userId}?limit=10`)
+        this.httpService.get(
+          `http://transactions-service:3002/api/transactions/user/${userId}?limit=10`,
+        ),
       );
       return response.data.data || [];
     } catch (error) {
@@ -110,7 +114,7 @@ export class AnalyticsService {
   private async getBalanceData(userId: string) {
     try {
       const response = await firstValueFrom(
-        this.httpService.get(`http://users-service:3001/api/users/${userId}/balance`)
+        this.httpService.get(`http://users-service:3001/api/users/${userId}/balance`),
       );
       return response.data;
     } catch (error) {
@@ -119,12 +123,16 @@ export class AnalyticsService {
     }
   }
 
-  private async getAllTransactions(userId: string, startDate: Date, endDate: Date): Promise<TransactionData[]> {
+  private async getAllTransactions(
+    userId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<TransactionData[]> {
     try {
       const response = await firstValueFrom(
         this.httpService.get(
-          `http://transactions-service:3002/api/transactions/user/${userId}?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&limit=1000`
-        )
+          `http://transactions-service:3002/api/transactions/user/${userId}?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&limit=1000`,
+        ),
       );
       return response.data.data || [];
     } catch (error) {
@@ -166,8 +174,9 @@ export class AnalyticsService {
   }
 
   private groupByCategory(transactions: TransactionData[]) {
+    const categories = this.getCategoriesMapping();
     return transactions.reduce((acc, transaction) => {
-      const category = this.categorizeTransaction(transaction.description, {});
+      const category = this.categorizeTransaction(transaction.description, categories);
       if (!acc[category]) acc[category] = { total: 0, count: 0, transactions: [] };
       acc[category].total += parseFloat(transaction.amount.toString());
       acc[category].count += 1;
@@ -176,24 +185,36 @@ export class AnalyticsService {
     }, {});
   }
 
+  private getCategoriesMapping(): Record<string, string[]> {
+    return {
+      Alimentação: ['restaurante', 'mercado', 'supermercado', 'ifood', 'padaria', 'lanchonete'],
+      Transporte: ['uber', 'taxi', 'combustivel', 'estacionamento', 'metro', 'onibus'],
+      Lazer: ['cinema', 'teatro', 'show', 'evento', 'academia', 'esporte'],
+      Saúde: ['farmacia', 'medico', 'dentista', 'hospital', 'plano', 'exame'],
+      Educação: ['curso', 'livro', 'material', 'faculdade', 'escola'],
+      Compras: ['shopping', 'loja', 'roupas', 'eletro', 'moveis'],
+      Serviços: ['conta', 'luz', 'agua', 'telefone', 'internet', 'gas'],
+      Outros: [],
+    };
+  }
   private async calculateMonthlySummary(userId: string): Promise<MonthlySummary> {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const transactions = await this.getAllTransactions(userId, startOfMonth, now);
 
     const income = transactions
-      .filter(t => t.type === 'CREDIT' || t.receiverUserId === userId)
+      .filter((t) => t.type === 'CREDIT' || t.receiverUserId === userId)
       .reduce((sum, t) => sum + parseFloat(t.amount.toString()), 0);
 
     const expenses = transactions
-      .filter(t => t.type === 'DEBIT' || t.senderUserId === userId)
+      .filter((t) => t.type === 'DEBIT' || t.senderUserId === userId)
       .reduce((sum, t) => sum + parseFloat(t.amount.toString()), 0);
 
     return {
       income,
       expenses,
       balance: income - expenses,
-      transactionCount: transactions.length
+      transactionCount: transactions.length,
     };
   }
 
@@ -212,39 +233,39 @@ export class AnalyticsService {
 
       const transactions = await this.getAllTransactions(userId, startDate, endDate);
       const expenses = transactions
-        .filter(t => t.senderUserId === userId)
+        .filter((t) => t.senderUserId === userId)
         .reduce((sum, t) => sum + parseFloat(t.amount.toString()), 0);
 
       trends.push({
         month: startDate.toISOString().slice(0, 7),
-        expenses
+        expenses,
       });
     }
 
-    // Calcular mudança percentual
     return trends.map((trend, index) => {
       if (index > 0) {
         const previous = trends[index - 1];
-        trend.change = previous.expenses > 0 ? ((trend.expenses - previous.expenses) / previous.expenses) * 100 : 0;
+        trend.change =
+          previous.expenses > 0
+            ? ((trend.expenses - previous.expenses) / previous.expenses) * 100
+            : 0;
       }
       return trend;
     });
   }
 
-  private async getLimitsUsage(userId: string): Promise<LimitsUsage> {
+  private async getLimitsUsage(): Promise<LimitsUsage> {
     try {
-      // Tentar buscar do serviço de usuários se existir endpoint de limits
       const response = await firstValueFrom(
-        this.httpService.get(`http://users-service:3001/api/limits/usage`)
+        this.httpService.get(`http://users-service:3001/api/limits/usage`),
       );
       return response.data;
     } catch (error) {
-      // Fallback com valores padrão
       return {
         dailyUsed: 0,
         dailyLimit: 1000,
         monthlyUsed: 0,
-        monthlyLimit: 10000
+        monthlyLimit: 10000,
       };
     }
   }
