@@ -5,6 +5,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { ProxyModule } from './proxy/proxy.module';
 import { HealthModule } from './health/health.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 import { MetricsController } from './metrics/metrics.controller';
 import { LoggingInterceptor, MetricsInterceptor } from '@loomi/shared';
 
@@ -23,6 +24,7 @@ import { LoggingInterceptor, MetricsInterceptor } from '@loomi/shared';
     AuthModule,
     ProxyModule,
     HealthModule,
+    AnalyticsModule,
   ],
   controllers: [MetricsController],
   providers: [
