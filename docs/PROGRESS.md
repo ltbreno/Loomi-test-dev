@@ -6,7 +6,7 @@
 
 ## Sumário Executivo
 
-Projeto concluído com sucesso dentro do prazo de 4 dias. Todos os requisitos obrigatórios foram implementados, além de diversos diferenciais técnicos. O sistema está pronto para deploy em produção na AWS ECS.
+Projeto concluído com sucesso dentro do prazo de 4 dias. Todos os requisitos obrigatórios foram implementados, além de diversos diferenciais técnicos. O sistema está deployado em produção na AWS ECS.
 
 ## Gestão de Atividades
 
@@ -14,7 +14,7 @@ Projeto concluído com sucesso dentro do prazo de 4 dias. Todos os requisitos ob
 
 **GitHub Projects** foi utilizada para gerenciar o backlog e acompanhar o progresso.
 
-Link do projeto: [GitHub Project Board](https://github.com/users/brenolopes/projects/loomi-banking)
+Link do projeto: [GitHub Project Board](https://github.com/users/ltbreno/projects/4/views/1)
 
 ### Organização de Demandas
 
@@ -47,27 +47,27 @@ Foi utilizada a matriz de Eisenhower adaptada para desenvolvimento:
 | P2 | Média - Melhorias e diferenciais | Testes, observabilidade, deploy |
 | P3 | Baixa - Nice to have | Métricas avançadas, documentação extra |
 
-### Sprint Planning
+### Sprint Planning ( Sequencia das atividades )
 
-#### Sprint 1 - Fundação (Dia 1)
+#### Sprint 1 - Fundação 
 - ✅ Setup do monorepo
 - ✅ Configuração de dependências compartilhadas
 - ✅ Docker Compose com infraestrutura completa
 - ✅ Estrutura base dos 3 microsserviços
 
-#### Sprint 2 - Core Features (Dia 2)
+#### Sprint 2 - Core Features
 - ✅ Users Service completo
 - ✅ Transactions Service completo
 - ✅ Integração Kafka entre serviços
 - ✅ Cache Redis implementado
 
-#### Sprint 3 - Gateway & Security (Dia 3 - Manhã)
+#### Sprint 3 - Gateway & Security
 - ✅ API Gateway completo
 - ✅ Autenticação JWT (access + refresh tokens)
 - ✅ Rate limiting
 - ✅ Proxy reverso para serviços
 
-#### Sprint 4 - Quality & Deploy (Dia 3 - Tarde e Dia 4)
+#### Sprint 4 - Quality & Deploy
 - ✅ Testes unitários e E2E
 - ✅ Logging estruturado
 - ✅ Métricas de observabilidade
@@ -112,7 +112,7 @@ Foi utilizada a matriz de Eisenhower adaptada para desenvolvimento:
 | #29 | Swagger Documentation | P1 | 1h | 30min | ✅ |
 | #30 | Scripts de deploy AWS | P2 | 2h | 1.5h | ✅ |
 
-**Total**: 65h estimadas → 45.75h reais (30% mais eficiente que estimado)
+**Total**: ( Desconsiderar tempo gerado pela IA, foi gasto cerca de 16h para criaçao de todo o projeto + Revisão )
 
 ## Principais Dificuldades Enfrentadas
 
@@ -319,10 +319,10 @@ As principais lições aprendidas foram:
 3. Documentação como parte integral do desenvolvimento
 4. Observabilidade é essencial, não opcional
 
-O sistema está production-ready e pode ser deployado na AWS ECS seguindo a documentação fornecida.
+O sistema está deployado na AWS ECS seguindo a documentação fornecida.
 
 ---
 
-**Data de Conclusão**: 14/12/2024  
+**Data de Conclusão**: 12/12/2024  
 **Status Final**: ✅ Entregue com Sucesso
 

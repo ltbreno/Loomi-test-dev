@@ -240,6 +240,8 @@ Implement structured logging and metrics:
    - **Parcialmente Implementado**: Apenas timeout e retry básico
    - **Razão**: Complexidade vs benefício para MVP
 
+   ## Circuit Breaker foi implementado após a geraçao desse arquivo
+
 ## Métricas de Produtividade
 
 ### Tempo Economizado (Estimativa)
