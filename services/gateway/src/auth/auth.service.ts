@@ -29,7 +29,6 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<any> {
     try {
-      // Call users service to validate credentials
       const response = await firstValueFrom(
         this.httpService.post(`${this.usersServiceUrl}/api/users/validate`, {
           email,
@@ -38,6 +37,10 @@ export class AuthService {
       );
       return response.data;
     } catch (error) {
+      if (error.response?.status === 401) {
+        return null;
+      }
+      console.error('Error validating user:', error.message);
       return null;
     }
   }

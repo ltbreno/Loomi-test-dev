@@ -16,6 +16,7 @@ import {
   ApiBearerAuth,
   ApiProperty,
 } from '@nestjs/swagger';
+import { IsNumber, IsString, IsNotEmpty } from 'class-validator';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 
@@ -26,12 +27,16 @@ class UpdateBalanceDto {
     type: 'number',
     format: 'decimal',
   })
+  @IsNumber({}, { message: 'O valor deve ser um número' })
+  @IsNotEmpty({ message: 'O valor não pode estar vazio' })
   amount: number;
 
   @ApiProperty({
     description: 'Motivo da atualização do saldo',
     example: 'Depósito via PIX',
   })
+  @IsString({ message: 'O motivo deve ser um texto' })
+  @IsNotEmpty({ message: 'O motivo não pode estar vazio' })
   reason: string;
 }
 
