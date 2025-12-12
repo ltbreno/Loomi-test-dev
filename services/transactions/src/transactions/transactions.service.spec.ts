@@ -6,6 +6,8 @@ import { TransactionsService } from './transactions.service';
 import { Transaction } from './entities/transaction.entity';
 import { KafkaProducerService } from '../kafka/kafka-producer.service';
 import { UsersServiceClient } from './clients/users-service.client';
+import { CircuitBreakerService } from '../circuit-breaker/circuit-breaker.service';
+import { FallbackService } from '../circuit-breaker/fallback.service';
 import { TransactionStatus } from '@loomi/shared';
 
 describe('TransactionsService', () => {
@@ -72,6 +74,20 @@ describe('TransactionsService', () => {
             getUser: jest.fn(),
             getUserBalance: jest.fn(),
             updateBalance: jest.fn(),
+          },
+        },
+        {
+          provide: CircuitBreakerService,
+          useValue: {
+            getBreaker: jest.fn(),
+            getBreakerStats: jest.fn(),
+          },
+        },
+        {
+          provide: FallbackService,
+          useValue: {
+            validateUserFallback: jest.fn(),
+            updateBalanceFallback: jest.fn(),
           },
         },
       ],
@@ -150,4 +166,3 @@ describe('TransactionsService', () => {
     });
   });
 });
-

@@ -6,6 +6,7 @@ import { TransactionsService } from './transactions.service';
 import { Transaction } from './entities/transaction.entity';
 import { UsersServiceClient } from './clients/users-service.client';
 import { KafkaModule } from '../kafka/kafka.module';
+import { CircuitBreakerModule } from '../circuit-breaker/circuit-breaker.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { KafkaModule } from '../kafka/kafka.module';
       maxRedirects: 5,
     }),
     KafkaModule,
+    CircuitBreakerModule,
   ],
   controllers: [TransactionsController],
   providers: [TransactionsService, UsersServiceClient],
