@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { HttpModule } from '@nestjs/axios';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { ProxyModule } from './proxy/proxy.module';
@@ -15,6 +16,7 @@ import { LoggingInterceptor, MetricsInterceptor } from '@loomi/shared';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    HttpModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000, // 1 minute

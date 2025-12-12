@@ -144,6 +144,10 @@ services:
       KAFKA_BROKERS: kafka:29092
       KAFKA_CLIENT_ID: users-service
       KAFKA_GROUP_ID: users-service-group
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      JWT_EXPIRES_IN: 15m
+      JWT_REFRESH_SECRET: your-super-secret-refresh-key-change-in-production
+      JWT_REFRESH_EXPIRES_IN: 7d
       AWS_REGION: us-east-1
       AWS_S3_BUCKET: loomi-profile-pictures
     networks:
