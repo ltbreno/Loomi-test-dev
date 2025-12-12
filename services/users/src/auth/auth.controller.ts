@@ -1,9 +1,15 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { IsEmail, IsString, IsNotEmpty } from 'class-validator';
 import { UsersService } from '../users/users.service';
 
 class ValidateUserDto {
+  @IsEmail({}, { message: 'Email deve ser válido' })
+  @IsNotEmpty({ message: 'Email não pode estar vazio' })
   email: string;
+
+  @IsString({ message: 'Password deve ser uma string' })
+  @IsNotEmpty({ message: 'Password não pode estar vazio' })
   password: string;
 }
 
@@ -23,10 +29,11 @@ export class AuthController {
     );
 
     if (!user) {
-      return null;
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    const { ...result } = user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = user;
     return result;
   }
 }

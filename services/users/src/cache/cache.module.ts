@@ -13,6 +13,10 @@ import { CacheService } from './cache.service';
 
         const ttl = parseInt(configService.get('REDIS_TTL') || '3600', 10);
 
+        // Usando cache em memória por enquanto devido a incompatibilidades
+        // do cache-manager-redis-store com cache-manager v5
+        // TODO: Migrar para Redis quando atualizar cache-manager para v6
+        console.log('📦 Usando cache em memória (TTL: ' + ttl + 's)');
         return caching('memory', {
           ttl: ttl > 0 ? ttl : 3600,
           max: 1000,
