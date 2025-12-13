@@ -13,7 +13,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CacheService } from '../cache/cache.service';
 import { KafkaProducerService } from '../kafka/kafka-producer.service';
 import { S3Service } from './s3.service';
-import { UserBankingDetailsUpdatedEvent, UserBalanceUpdatedEvent } from '@loomi/shared';
+import {
+  UserBankingDetailsUpdatedEvent,
+  UserBalanceUpdatedEvent,
+  BankingDetails,
+} from '@loomi/shared';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -111,8 +115,8 @@ export class UsersService {
         version: '1.0',
         payload: {
           userId: user.id,
-          oldBankingDetails: oldBankingDetails || ({} as any),
-          newBankingDetails: user.bankingDetails,
+          oldBankingDetails: oldBankingDetails as BankingDetails,
+          newBankingDetails: user.bankingDetails || ({} as BankingDetails),
         },
       };
 

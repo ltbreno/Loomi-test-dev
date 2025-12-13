@@ -2,34 +2,34 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class SpendingAnalysisDto {
   @ApiProperty()
-  categories: SpendingByCategoryDto[];
+  categories!: SpendingByCategoryDto[];
 
   @ApiProperty()
-  totalSpent: number;
+  totalSpent!: number;
 
   @ApiProperty()
-  period: {
+  period!: {
     startDate: Date;
     endDate: Date;
   };
 
   @ApiProperty()
-  insights: string[];
+  insights!: string[];
 }
 
 export class SpendingByCategoryDto {
   @ApiProperty()
-  category: string;
+  category!: string;
 
   @ApiProperty()
-  total: number;
+  total!: number;
 
   @ApiProperty()
-  count: number;
+  count!: number;
 
   @ApiProperty()
-  percentage: number;
+  percentage!: number;
 
   @ApiProperty()
-  trend: 'up' | 'down' | 'stable';
+  trend!: 'up' | 'down' | 'stable';
 }

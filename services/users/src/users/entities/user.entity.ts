@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { AccountType, BankingDetails } from '@loomi/shared';
 
 @Entity('users')
 export class User {
@@ -70,11 +71,7 @@ export class User {
     nullable: true,
   })
   @Column({ type: 'jsonb', nullable: true })
-  bankingDetails: {
-    agency: string;
-    accountNumber: string;
-    accountType: 'CHECKING' | 'SAVINGS';
-  };
+  bankingDetails: BankingDetails | null;
 
   @ApiProperty({
     description: 'Saldo atual da conta do usuário',

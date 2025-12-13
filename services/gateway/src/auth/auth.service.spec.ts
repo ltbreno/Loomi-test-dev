@@ -4,16 +4,25 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
 import { AuthService } from './auth.service';
+import { AxiosResponse } from 'axios';
+import { UserProfile } from '@loomi/shared';
 
 describe('AuthService', () => {
   let service: AuthService;
   let jwtService: JwtService;
   let httpService: HttpService;
 
-  const mockUser = {
+  const mockUser: UserProfile = {
     id: '123e4567-e89b-12d3-a456-426614174000',
     email: 'test@example.com',
     name: 'Test User',
+    address: null,
+    profilePicture: null,
+    bankingDetails: null,
+    balance: 0,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   beforeEach(async () => {
@@ -74,7 +83,14 @@ describe('AuthService', () => {
 
   describe('validateUser', () => {
     it('should return user if credentials are valid', async () => {
-      jest.spyOn(httpService, 'post').mockReturnValue(of({ data: mockUser } as any));
+      const response: AxiosResponse<UserProfile> = {
+        data: mockUser,
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {},
+      };
+      jest.spyOn(httpService, 'post').mockReturnValue(of(response));
 
       const result = await service.validateUser('test@example.com', 'password123');
 
@@ -82,11 +98,14 @@ describe('AuthService', () => {
     });
 
     it('should return null if credentials are invalid', async () => {
-      jest.spyOn(httpService, 'post').mockReturnValue(
-        of({
-          data: null,
-        } as any),
-      );
+      const response: AxiosResponse<UserProfile | null> = {
+        data: null,
+        status: 401,
+        statusText: 'Unauthorized',
+        headers: {},
+        config: {},
+      };
+      jest.spyOn(httpService, 'post').mockReturnValue(of(response));
 
       const result = await service.validateUser('test@example.com', 'wrong-password');
 

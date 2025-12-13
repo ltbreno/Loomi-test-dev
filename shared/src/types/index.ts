@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { AccountType, TransactionStatus, TransactionType } from '../enums';
 
 export interface BankingDetails {
   agency: string;
   accountNumber: string;
-  accountType: 'CHECKING' | 'SAVINGS';
+  accountType: AccountType;
 }
 
 export interface UserBalance {
@@ -61,5 +62,49 @@ export interface PaginatedResponse<T> {
   page: number;
   limit: number;
   totalPages: number;
+}
+
+export interface CreateUserRequest {
+  name: string;
+  email: string;
+  password: string;
+  address?: string;
+  bankingDetails?: BankingDetails;
+  profilePicture?: string | null;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  address?: string | null;
+  profilePicture?: string | null;
+  bankingDetails?: BankingDetails | null;
+  balance: number;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateTransactionRequest {
+  senderUserId: string;
+  receiverUserId: string;
+  amount: number;
+  description: string;
+}
+
+export type TransactionMetadata = Record<string, unknown>;
+
+export interface TransactionRecord {
+  id: string;
+  senderUserId: string;
+  receiverUserId: string;
+  amount: number;
+  description: string;
+  status: TransactionStatus;
+  type: TransactionType;
+  metadata?: TransactionMetadata | null;
+  createdAt: Date;
+  processedAt: Date;
 }
 

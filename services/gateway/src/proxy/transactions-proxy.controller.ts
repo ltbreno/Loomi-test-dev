@@ -23,6 +23,11 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import {
+  CreateTransactionRequest,
+  PaginatedResponse,
+  TransactionRecord,
+} from '@loomi/shared';
 
 @ApiTags('transactions')
 @Controller('transactions')
@@ -99,9 +104,11 @@ export class TransactionsProxyController {
     status: 401,
     description: 'Token de autenticação inválido ou ausente',
   })
-  async createTransaction(@Body() createTransactionDto: any) {
+  async createTransaction(
+    @Body() createTransactionDto: CreateTransactionRequest,
+  ): Promise<TransactionRecord> {
     const response = await firstValueFrom(
-      this.httpService.post(
+      this.httpService.post<TransactionRecord>(
         `${this.transactionsServiceUrl}/api/transactions`,
         createTransactionDto,
       ),
@@ -132,9 +139,13 @@ export class TransactionsProxyController {
     status: 401,
     description: 'Token de autenticação inválido ou ausente',
   })
-  async getTransaction(@Param('transactionId', ParseUUIDPipe) transactionId: string) {
+  async getTransaction(
+    @Param('transactionId', ParseUUIDPipe) transactionId: string,
+  ): Promise<TransactionRecord> {
     const response = await firstValueFrom(
-      this.httpService.get(`${this.transactionsServiceUrl}/api/transactions/${transactionId}`),
+      this.httpService.get<TransactionRecord>(
+        `${this.transactionsServiceUrl}/api/transactions/${transactionId}`,
+      ),
     );
     return response.data;
   }
@@ -184,9 +195,9 @@ export class TransactionsProxyController {
     @Param('userId', ParseUUIDPipe) userId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-  ) {
+  ): Promise<PaginatedResponse<TransactionRecord>> {
     const response = await firstValueFrom(
-      this.httpService.get(
+      this.httpService.get<PaginatedResponse<TransactionRecord>>(
         `${this.transactionsServiceUrl}/api/transactions/user/${userId}?page=${page}&limit=${limit}`,
       ),
     );
@@ -224,9 +235,11 @@ export class TransactionsProxyController {
     status: 401,
     description: 'Token de autenticação inválido ou ausente',
   })
-  async reverseTransaction(@Param('transactionId', ParseUUIDPipe) transactionId: string) {
+  async reverseTransaction(
+    @Param('transactionId', ParseUUIDPipe) transactionId: string,
+  ): Promise<TransactionRecord> {
     const response = await firstValueFrom(
-      this.httpService.post(
+      this.httpService.post<TransactionRecord>(
         `${this.transactionsServiceUrl}/api/transactions/${transactionId}/reverse`,
       ),
     );

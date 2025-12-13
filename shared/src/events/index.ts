@@ -11,8 +11,8 @@ export interface UserBankingDetailsUpdatedEvent extends BaseEvent {
   eventType: 'user.banking-details.updated';
   payload: {
     userId: string;
-    oldBankingDetails: BankingDetails;
-    newBankingDetails: BankingDetails;
+    oldBankingDetails: BankingDetails | null;
+    newBankingDetails: BankingDetails | null;
   };
 }
 
@@ -54,7 +54,7 @@ export interface NotificationRequestedEvent extends BaseEvent {
     userId: string;
     type: 'EMAIL' | 'SMS' | 'PUSH';
     template: string;
-    data: Record<string, any>;
+    data: Record<string, unknown>;
   };
 }
 
@@ -64,4 +64,3 @@ export type DomainEvent =
   | TransactionCompletedEvent
   | TransactionFailedEvent
   | NotificationRequestedEvent;
-
