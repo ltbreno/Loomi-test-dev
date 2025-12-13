@@ -25,7 +25,7 @@ export class TransactionStatusEnum {
     example: TransactionStatus.PENDING,
     description: 'Status da transação',
   })
-  status: TransactionStatus;
+  status!: TransactionStatus;
 }
 
 export class TransactionTypeEnum {
@@ -34,7 +34,7 @@ export class TransactionTypeEnum {
     example: TransactionType.TRANSFER,
     description: 'Tipo da transação',
   })
-  type: TransactionType;
+  type!: TransactionType;
 }
 
 export class AccountTypeEnum {
@@ -43,7 +43,7 @@ export class AccountTypeEnum {
     example: AccountType.CHECKING,
     description: 'Tipo da conta bancária',
   })
-  accountType: AccountType;
+  accountType!: AccountType;
 }
 
 export enum EventType {
@@ -53,4 +53,3 @@ export enum EventType {
   TRANSACTION_FAILED = 'transaction.failed',
   NOTIFICATION_REQUESTED = 'notification.requested',
 }
-
