@@ -23,11 +23,7 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import {
-  CreateTransactionRequest,
-  PaginatedResponse,
-  TransactionRecord,
-} from '@loomi/shared';
+import { CreateTransactionRequest, PaginatedResponse, TransactionRecord } from '@loomi/shared';
 
 @ApiTags('transactions')
 @Controller('transactions')

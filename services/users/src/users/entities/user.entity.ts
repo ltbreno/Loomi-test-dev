@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { AccountType, BankingDetails } from '@loomi/shared';
+import { BankingDetails } from '@loomi/shared';
 
 @Entity('users')
 export class User {
@@ -17,14 +17,14 @@ export class User {
     example: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
   })
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ApiProperty({
     description: 'Nome completo do usuário',
     example: 'João Silva',
   })
   @Column({ type: 'varchar', length: 255 })
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'Email do usuário',
@@ -33,7 +33,7 @@ export class User {
   })
   @Column({ type: 'varchar', length: 255, unique: true })
   @Index()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'Senha do usuário (não incluída nas respostas)',
@@ -42,7 +42,7 @@ export class User {
   })
   @Column({ type: 'varchar' })
   @Exclude()
-  password: string;
+  password!: string;
 
   @ApiProperty({
     description: 'Endereço do usuário',
@@ -50,7 +50,7 @@ export class User {
     nullable: true,
   })
   @Column({ type: 'varchar', length: 500, nullable: true })
-  address: string;
+  address!: string;
 
   @ApiProperty({
     description: 'URL da foto de perfil do usuário',
@@ -58,7 +58,7 @@ export class User {
     nullable: true,
   })
   @Column({ type: 'varchar', nullable: true })
-  profilePicture: string;
+  profilePicture!: string;
 
   @ApiProperty({
     description: 'Dados bancários do usuário',
@@ -71,7 +71,7 @@ export class User {
     nullable: true,
   })
   @Column({ type: 'jsonb', nullable: true })
-  bankingDetails: BankingDetails | null;
+  bankingDetails!: BankingDetails | null;
 
   @ApiProperty({
     description: 'Saldo atual da conta do usuário',
@@ -80,7 +80,7 @@ export class User {
     format: 'decimal',
   })
   @Column({ type: 'decimal', precision: 15, scale: 2, default: 0 })
-  balance: number;
+  balance!: number;
 
   @ApiProperty({
     description: 'Indica se a conta do usuário está ativa',
@@ -88,7 +88,7 @@ export class User {
     default: true,
   })
   @Column({ type: 'boolean', default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @ApiProperty({
     description: 'Data de criação da conta',
@@ -96,7 +96,7 @@ export class User {
     format: 'date-time',
   })
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({
     description: 'Data da última atualização da conta',
@@ -104,5 +104,5 @@ export class User {
     format: 'date-time',
   })
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

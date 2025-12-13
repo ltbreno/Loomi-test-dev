@@ -7,6 +7,6 @@ import { AnalyticsService } from './analytics.service';
   imports: [HttpModule],
   controllers: [AnalyticsController],
   providers: [AnalyticsService],
-  exports: [AnalyticsService]
+  exports: [AnalyticsService],
 })
 export class AnalyticsModule {}
