@@ -7,12 +7,10 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthResponseDto, RegisterResponseDto } from './dto/auth-response.dto';
+import { UserProfile } from '@loomi/shared';
 
 interface AuthenticatedRequest {
-  user: {
-    userId: string;
-    email: string;
-  };
+  user: UserProfile;
 }
 
 interface RefreshRequest {
