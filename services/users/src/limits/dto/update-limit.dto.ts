@@ -11,5 +11,5 @@ export class UpdateLimitDto {
   @IsNumber({}, { message: 'O limite deve ser um número' })
   @Min(1, { message: 'O limite deve ser no mínimo 1 real' })
   @Max(50000, { message: 'O limite não pode exceder 50.000 reais' })
-  limit: number;
+  limit!: number;
 }

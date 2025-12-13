@@ -4,49 +4,49 @@ import { TransactionData } from '../types/analytics.types';
 
 export class TransactionSummaryDto {
   @ApiProperty()
-  period: string;
+  period!: string;
 
   @ApiProperty()
-  totalTransactions: number;
+  totalTransactions!: number;
 
   @ApiProperty()
-  totalAmount: number;
+  totalAmount!: number;
 
   @ApiProperty()
-  income: number;
+  income!: number;
 
   @ApiProperty()
-  expenses: number;
+  expenses!: number;
 
   @ApiProperty()
-  netAmount: number;
+  netAmount!: number;
 
   @ApiProperty()
-  transactions: TransactionData[];
+  transactions!: TransactionData[];
 }
 
 export class SpendingByCategoryDto {
   @ApiProperty()
-  category: string;
+  category!: string;
 
   @ApiProperty()
-  total: number;
+  total!: number;
 
   @ApiProperty()
-  count: number;
+  count!: number;
 
   @ApiProperty()
-  percentage: number;
+  percentage!: number;
 }
 
 export class TransactionSummaryQueryDto {
   @ApiProperty({ description: 'Data inicial (YYYY-MM-DD)' })
   @Type(() => Date)
-  startDate: Date;
+  startDate!: Date;
 
   @ApiProperty({ description: 'Data final (YYYY-MM-DD)' })
   @Type(() => Date)
-  endDate: Date;
+  endDate!: Date;
 
   @ApiProperty({
     description: 'Tipo de agrupamento',

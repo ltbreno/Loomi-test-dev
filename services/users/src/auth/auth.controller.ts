@@ -6,11 +6,11 @@ import { UsersService } from '../users/users.service';
 class ValidateUserDto {
   @IsEmail({}, { message: 'Email deve ser válido' })
   @IsNotEmpty({ message: 'Email não pode estar vazio' })
-  email: string;
+  email!: string;
 
   @IsString({ message: 'Password deve ser uma string' })
   @IsNotEmpty({ message: 'Password não pode estar vazio' })
-  password: string;
+  password!: string;
 }
 
 @ApiTags('auth')

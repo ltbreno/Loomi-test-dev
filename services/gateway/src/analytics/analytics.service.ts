@@ -152,37 +152,46 @@ export class AnalyticsService {
   }
 
   private groupByDay(transactions: TransactionData[]) {
-    return transactions.reduce((acc, transaction) => {
-      const day = new Date(transaction.createdAt).toISOString().split('T')[0];
-      if (!acc[day]) acc[day] = { total: 0, count: 0, transactions: [] };
-      acc[day].total += parseFloat(transaction.amount.toString());
-      acc[day].count += 1;
-      acc[day].transactions.push(transaction);
-      return acc;
-    }, {});
+    return transactions.reduce(
+      (acc, transaction) => {
+        const day = new Date(transaction.createdAt).toISOString().split('T')[0];
+        if (!acc[day]) acc[day] = { total: 0, count: 0, transactions: [] };
+        acc[day].total += parseFloat(transaction.amount.toString());
+        acc[day].count += 1;
+        acc[day].transactions.push(transaction);
+        return acc;
+      },
+      {} as Record<string, { total: number; count: number; transactions: TransactionData[] }>,
+    );
   }
 
   private groupByMonth(transactions: TransactionData[]) {
-    return transactions.reduce((acc, transaction) => {
-      const month = new Date(transaction.createdAt).toISOString().slice(0, 7);
-      if (!acc[month]) acc[month] = { total: 0, count: 0, transactions: [] };
-      acc[month].total += parseFloat(transaction.amount.toString());
-      acc[month].count += 1;
-      acc[month].transactions.push(transaction);
-      return acc;
-    }, {});
+    return transactions.reduce(
+      (acc, transaction) => {
+        const month = new Date(transaction.createdAt).toISOString().slice(0, 7);
+        if (!acc[month]) acc[month] = { total: 0, count: 0, transactions: [] };
+        acc[month].total += parseFloat(transaction.amount.toString());
+        acc[month].count += 1;
+        acc[month].transactions.push(transaction);
+        return acc;
+      },
+      {} as Record<string, { total: number; count: number; transactions: TransactionData[] }>,
+    );
   }
 
   private groupByCategory(transactions: TransactionData[]) {
     const categories = this.getCategoriesMapping();
-    return transactions.reduce((acc, transaction) => {
-      const category = this.categorizeTransaction(transaction.description, categories);
-      if (!acc[category]) acc[category] = { total: 0, count: 0, transactions: [] };
-      acc[category].total += parseFloat(transaction.amount.toString());
-      acc[category].count += 1;
-      acc[category].transactions.push(transaction);
-      return acc;
-    }, {});
+    return transactions.reduce(
+      (acc, transaction) => {
+        const category = this.categorizeTransaction(transaction.description, categories);
+        if (!acc[category]) acc[category] = { total: 0, count: 0, transactions: [] };
+        acc[category].total += parseFloat(transaction.amount.toString());
+        acc[category].count += 1;
+        acc[category].transactions.push(transaction);
+        return acc;
+      },
+      {} as Record<string, { total: number; count: number; transactions: TransactionData[] }>,
+    );
   }
 
   private getCategoriesMapping(): Record<string, string[]> {

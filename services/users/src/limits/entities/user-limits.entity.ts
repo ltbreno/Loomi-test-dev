@@ -5,29 +5,29 @@ import { ApiProperty } from '@nestjs/swagger';
 export class UserLimits {
   @ApiProperty()
   @PrimaryColumn('uuid')
-  userId: string;
+  userId!: string;
 
   @ApiProperty({ description: 'Limite diário em reais' })
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 1000 })
-  dailyLimit: number;
+  dailyLimit!: number;
 
   @ApiProperty({ description: 'Limite mensal em reais' })
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 10000 })
-  monthlyLimit: number;
+  monthlyLimit!: number;
 
   @ApiProperty({ description: 'Limite por transação' })
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 5000 })
-  transactionLimit: number;
+  transactionLimit!: number;
 
   @ApiProperty({ description: 'Limite para transações internacionais' })
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 2000 })
-  internationalLimit: number;
+  internationalLimit!: number;
 
   @ApiProperty()
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

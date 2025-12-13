@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class LimitsUsageDto {
   @ApiProperty({ description: 'Informações de uso do limite diário' })
-  daily: {
+  daily!: {
     used: number;
     limit: number;
     remaining: number;
@@ -10,7 +10,7 @@ export class LimitsUsageDto {
   };
 
   @ApiProperty({ description: 'Informações de uso do limite mensal' })
-  monthly: {
+  monthly!: {
     used: number;
     limit: number;
     remaining: number;
@@ -18,33 +18,33 @@ export class LimitsUsageDto {
   };
 
   @ApiProperty({ description: 'Limite por transação individual' })
-  transactionLimit: number;
+  transactionLimit!: number;
 
   @ApiProperty({ description: 'Limite para transações internacionais' })
-  internationalLimit: number;
+  internationalLimit!: number;
 }
 
 export class LimitIncreaseRequestResponseDto {
   @ApiProperty({ description: 'ID da solicitação' })
-  requestId: string;
+  requestId!: string;
 
   @ApiProperty({ description: 'Limite solicitado' })
-  requestedLimit: number;
+  requestedLimit!: number;
 
   @ApiProperty({ description: 'Tipo do limite' })
-  limitType: 'daily' | 'monthly';
+  limitType!: 'daily' | 'monthly';
 
   @ApiProperty({ description: 'Razão da solicitação' })
-  reason: string;
+  reason!: string;
 
   @ApiProperty({
     description: 'Status da solicitação',
     enum: ['PENDING', 'APPROVED', 'REJECTED', 'EXPIRED'],
   })
-  status: string;
+  status!: string;
 
   @ApiProperty({ description: 'Data de criação' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({ description: 'Comentários do revisor', required: false })
   reviewerComments?: string;

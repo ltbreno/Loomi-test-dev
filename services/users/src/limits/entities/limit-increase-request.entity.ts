@@ -12,23 +12,23 @@ export enum LimitIncreaseStatus {
 export class LimitIncreaseRequest {
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ApiProperty()
   @Column('uuid')
-  userId: string;
+  userId!: string;
 
   @ApiProperty({ description: 'Limite solicitado' })
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  requestedLimit: number;
+  requestedLimit!: number;
 
   @ApiProperty({ description: 'Tipo do limite (daily/monthly)' })
   @Column({ default: 'monthly' })
-  limitType: 'daily' | 'monthly';
+  limitType!: 'daily' | 'monthly';
 
   @ApiProperty({ description: 'Razão da solicitação' })
   @Column({ type: 'text' })
-  reason: string;
+  reason!: string;
 
   @ApiProperty({ enum: LimitIncreaseStatus })
   @Column({
@@ -36,7 +36,7 @@ export class LimitIncreaseRequest {
     enum: LimitIncreaseStatus,
     default: LimitIncreaseStatus.PENDING,
   })
-  status: LimitIncreaseStatus;
+  status!: LimitIncreaseStatus;
 
   @ApiProperty({ description: 'Comentários do aprovador' })
   @Column({ type: 'text', nullable: true })
@@ -48,7 +48,7 @@ export class LimitIncreaseRequest {
 
   @ApiProperty()
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty()
   @Column({ type: 'timestamp', nullable: true })

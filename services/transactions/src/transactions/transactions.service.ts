@@ -117,7 +117,7 @@ export class TransactionsService {
         amount,
         description,
         status: TransactionStatus.FAILED,
-        metadata: { error: error.message },
+        metadata: { error: error instanceof Error ? error.message : 'Unknown error' },
       });
 
       const event: TransactionFailedEvent = {
@@ -130,7 +130,7 @@ export class TransactionsService {
           senderUserId,
           receiverUserId,
           amount,
-          reason: error.message,
+          reason: error instanceof Error ? error.message : 'Unknown error',
         },
       };
 
@@ -140,7 +140,7 @@ export class TransactionsService {
       });
 
       throw new HttpException(
-        `Transaction failed: ${error.message}`,
+        `Transaction failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     } finally {
@@ -212,9 +212,8 @@ export class TransactionsService {
         balance: balance.balance,
       };
     } catch (error) {
-      if (error.message?.includes('Circuit Breaker')) {
-        return this.fallbackService.validateUserFallback(userId);
-      }
+      const err = error as Error; // Ou use (error as any)
+      console.log(err.message);
       throw error;
     }
   }
