@@ -159,7 +159,7 @@ export class AnalyticsService {
       acc[day].count += 1;
       acc[day].transactions.push(transaction);
       return acc;
-    }, {});
+    }, {} as Record<string, { total: number; count: number; transactions: TransactionData[] }>);
   }
 
   private groupByMonth(transactions: TransactionData[]) {
@@ -170,7 +170,7 @@ export class AnalyticsService {
       acc[month].count += 1;
       acc[month].transactions.push(transaction);
       return acc;
-    }, {});
+    }, {} as Record<string, { total: number; count: number; transactions: TransactionData[] }>);
   }
 
   private groupByCategory(transactions: TransactionData[]) {
@@ -182,7 +182,7 @@ export class AnalyticsService {
       acc[category].count += 1;
       acc[category].transactions.push(transaction);
       return acc;
-    }, {});
+    }, {} as Record<string, { total: number; count: number; transactions: TransactionData[] }>);
   }
 
   private getCategoriesMapping(): Record<string, string[]> {

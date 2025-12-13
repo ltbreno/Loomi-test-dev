@@ -1,8 +1,15 @@
-import { Controller, Get, Query, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards, Req, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AnalyticsService } from './analytics.service';
 import { TransactionSummaryQueryDto } from './dto/transaction-summary.dto';
+
+interface AuthenticatedRequest {
+  user: {
+    userId: string;
+    email: string;
+  };
+}
 
 @ApiTags('analytics')
 @Controller('analytics')
@@ -15,7 +22,7 @@ export class AnalyticsController {
     summary: 'Dashboard financeiro completo do usuário',
     description: 'Retorna visão consolidada da saúde financeira do usuário',
   })
-  async getDashboard(@Req() req) {
+  async getDashboard(@Req() req: AuthenticatedRequest) {
     return this.analyticsService.getUserDashboard(req.user.userId);
   }
 
@@ -24,7 +31,7 @@ export class AnalyticsController {
     summary: 'Resumo de transações por período',
     description: 'Estatísticas agregadas de transações com agrupamento flexível',
   })
-  async getTransactionSummary(@Query() query: TransactionSummaryQueryDto, @Req() req) {
+  async getTransactionSummary(@Query() query: TransactionSummaryQueryDto, @Req() req: AuthenticatedRequest) {
     return this.analyticsService.getTransactionSummary(
       req.user.userId,
       query.startDate,
@@ -38,7 +45,7 @@ export class AnalyticsController {
     summary: 'Análise de gastos por categoria',
     description: 'Categorização inteligente de despesas com insights',
   })
-  async getSpendingByCategory(@Req() req) {
+  async getSpendingByCategory(@Req() req: AuthenticatedRequest) {
     return this.analyticsService.getSpendingByCategory(req.user.userId);
   }
 }

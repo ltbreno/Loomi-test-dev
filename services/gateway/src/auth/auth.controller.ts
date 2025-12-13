@@ -8,6 +8,19 @@ import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthResponseDto, RegisterResponseDto } from './dto/auth-response.dto';
 
+interface AuthenticatedRequest {
+  user: {
+    userId: string;
+    email: string;
+  };
+}
+
+interface RefreshRequest {
+  user: {
+    refreshToken: string;
+  };
+}
+
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -52,7 +65,7 @@ export class AuthController {
       },
     },
   })
-  async login(@Request() req) {
+  async login(@Request() req: AuthenticatedRequest) {
     return this.authService.login(req.user);
   }
 
@@ -141,7 +154,7 @@ export class AuthController {
       },
     },
   })
-  async refresh(@Request() req) {
+  async refresh(@Request() req: RefreshRequest) {
     return this.authService.refresh(req.user.refreshToken);
   }
 }

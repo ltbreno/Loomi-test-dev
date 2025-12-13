@@ -40,7 +40,7 @@ describe('AuthService', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn((key: string) => {
-              const config = {
+              const config: Record<string, string> = {
                 USERS_SERVICE_URL: 'http://localhost:3001',
                 JWT_SECRET: 'test-secret',
                 JWT_EXPIRES_IN: '15m',
@@ -88,7 +88,9 @@ describe('AuthService', () => {
         status: 200,
         statusText: 'OK',
         headers: {},
-        config: {},
+        config: {
+          headers: {},
+        },
       };
       jest.spyOn(httpService, 'post').mockReturnValue(of(response));
 
@@ -103,7 +105,9 @@ describe('AuthService', () => {
         status: 401,
         statusText: 'Unauthorized',
         headers: {},
-        config: {},
+        config: {
+          headers: {},
+        },
       };
       jest.spyOn(httpService, 'post').mockReturnValue(of(response));
 
