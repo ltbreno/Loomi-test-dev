@@ -40,7 +40,7 @@ export class CircuitBreakerController {
   })
   getAllStats() {
     const services = ['users-service', 'notifications-service', 'analytics-service'];
-    const stats = {};
+    const stats: Record<string, unknown> = {};
 
     services.forEach((service) => {
       stats[service] = this.circuitBreakerService.getBreakerStats(service);

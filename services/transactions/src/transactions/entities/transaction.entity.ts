@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { TransactionMetadata, TransactionStatus, TransactionType } from '@loomi/shared';
+import { TransactionStatus, TransactionType } from '@loomi/shared';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('transactions')
@@ -16,7 +16,7 @@ export class Transaction {
     example: 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a22',
   })
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ApiProperty({
     description: 'ID do usuário que envia a transação',
@@ -24,7 +24,7 @@ export class Transaction {
   })
   @Column({ type: 'uuid' })
   @Index()
-  senderUserId: string;
+  senderUserId!: string;
 
   @ApiProperty({
     description: 'ID do usuário que recebe a transação',
@@ -32,7 +32,7 @@ export class Transaction {
   })
   @Column({ type: 'uuid' })
   @Index()
-  receiverUserId: string;
+  receiverUserId!: string;
 
   @ApiProperty({
     description: 'Valor da transação',
@@ -42,7 +42,7 @@ export class Transaction {
     minimum: 0.01,
   })
   @Column({ type: 'decimal', precision: 15, scale: 2 })
-  amount: number;
+  amount!: number;
 
   @ApiProperty({
     description: 'Descrição da transação',
@@ -50,7 +50,7 @@ export class Transaction {
     maxLength: 500,
   })
   @Column({ type: 'varchar', length: 500 })
-  description: string;
+  description!: string;
 
   @ApiProperty({
     description: 'Status atual da transação',
@@ -64,7 +64,7 @@ export class Transaction {
     default: TransactionStatus.PENDING,
   })
   @Index()
-  status: TransactionStatus;
+  status!: TransactionStatus;
 
   @ApiProperty({
     description: 'Tipo da transação',
@@ -77,7 +77,7 @@ export class Transaction {
     enum: TransactionType,
     default: TransactionType.TRANSFER,
   })
-  type: TransactionType;
+  type!: TransactionType;
 
   @ApiProperty({
     description: 'Metadados adicionais da transação',
@@ -86,7 +86,7 @@ export class Transaction {
     nullable: true,
   })
   @Column({ type: 'jsonb', nullable: true })
-  metadata: TransactionMetadata | null;
+  metadata!: Record<string, unknown> | null;
 
   @ApiProperty({
     description: 'Data de criação da transação',
@@ -94,7 +94,7 @@ export class Transaction {
     format: 'date-time',
   })
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({
     description: 'Data de processamento da transação',
@@ -103,5 +103,5 @@ export class Transaction {
   })
   @UpdateDateColumn()
   @Index()
-  processedAt: Date;
+  processedAt!: Date;
 }
