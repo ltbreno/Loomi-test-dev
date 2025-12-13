@@ -11,7 +11,7 @@ export class LimitIncreaseRequestDto {
   @IsNumber({}, { message: 'O limite solicitado deve ser um número' })
   @Min(1, { message: 'O limite deve ser no mínimo 1 real' })
   @Max(100000, { message: 'O limite solicitado não pode exceder 100.000 reais' })
-  requestedLimit: number;
+  requestedLimit!: number;
 
   @ApiProperty({
     description: 'Razão da solicitação de aumento',
@@ -21,7 +21,7 @@ export class LimitIncreaseRequestDto {
   })
   @IsString({ message: 'A razão deve ser um texto' })
   @Length(10, 500, { message: 'A razão deve ter entre 10 e 500 caracteres' })
-  reason: string;
+  reason!: string;
 
   @ApiProperty({
     description: 'Tipo do limite a ser aumentado',

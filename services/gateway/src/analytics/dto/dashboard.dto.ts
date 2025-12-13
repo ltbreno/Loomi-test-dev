@@ -9,20 +9,20 @@ import {
 
 export class DashboardDto {
   @ApiProperty({ description: 'Dados do usuário' })
-  user: UserData;
+  user!: UserData;
 
   @ApiProperty({ description: 'Saldo atual da conta' })
-  balance: { balance: number; currency?: string };
+  balance!: { balance: number; currency?: string };
 
   @ApiProperty({ description: 'Últimas 5 transações', type: [Object] })
-  recentTransactions: TransactionData[];
+  recentTransactions!: TransactionData[];
 
   @ApiProperty({ description: 'Resumo financeiro do mês atual' })
-  monthlySummary: MonthlySummary;
+  monthlySummary!: MonthlySummary;
 
   @ApiProperty({ description: 'Tendências de gastos dos últimos 6 meses', type: [Object] })
-  spendingTrends: SpendingTrend[];
+  spendingTrends!: SpendingTrend[];
 
   @ApiProperty({ description: 'Uso atual vs limites de conta' })
-  limits: LimitsUsage;
+  limits!: LimitsUsage;
 }

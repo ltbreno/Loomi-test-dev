@@ -39,7 +39,8 @@ export class MetricsController {
       );
       return response.data;
     } catch (error) {
-      console.error('Failed to fetch circuit breaker stats:', error.message);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Failed to fetch circuit breaker stats:', message);
       return {
         timestamp: new Date().toISOString(),
         error: 'Circuit breaker stats unavailable',

@@ -8,6 +8,13 @@ import { LimitsUsageDto, LimitIncreaseRequestResponseDto } from './dto/limits-us
 import { UserLimits } from './entities/user-limits.entity';
 import { LimitIncreaseRequest } from './entities/limit-increase-request.entity';
 
+interface AuthenticatedRequest {
+  user: {
+    userId: string;
+    email: string;
+  };
+}
+
 @ApiTags('limits')
 @Controller('limits')
 @UseGuards(JwtAuthGuard)
@@ -25,8 +32,8 @@ export class LimitsController {
     description: 'Limites retornados com sucesso',
     type: UserLimits,
   })
-  async getLimits(@Req() req): Promise<UserLimits> {
-    return this.limitsService.getUserLimits(req.user.userId);
+  async getLimits(@Req() req: AuthenticatedRequest): Promise<UserLimits> {
+    return this.limitsService.getUserLimits(req.user.userId as string);
   }
 
   @Get('usage')
@@ -39,8 +46,8 @@ export class LimitsController {
     description: 'Uso dos limites calculado com sucesso',
     type: LimitsUsageDto,
   })
-  async getLimitsUsage(@Req() req): Promise<LimitsUsageDto> {
-    return this.limitsService.getLimitsUsage(req.user.userId);
+  async getLimitsUsage(@Req() req: AuthenticatedRequest): Promise<LimitsUsageDto> {
+    return this.limitsService.getLimitsUsage(req.user.userId as string);
   }
 
   @Patch('daily')
@@ -57,8 +64,11 @@ export class LimitsController {
     status: 400,
     description: 'Dados inválidos ou limite fora dos parâmetros permitidos',
   })
-  async updateDailyLimit(@Body() dto: UpdateLimitDto, @Req() req): Promise<UserLimits> {
-    return this.limitsService.updateDailyLimit(req.user.userId, dto.limit);
+  async updateDailyLimit(
+    @Body() dto: UpdateLimitDto,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<UserLimits> {
+    return this.limitsService.updateDailyLimit(req.user.userId as string, dto.limit);
   }
 
   @Patch('monthly')
@@ -76,8 +86,11 @@ export class LimitsController {
     status: 400,
     description: 'Dados inválidos ou limite fora dos parâmetros permitidos',
   })
-  async updateMonthlyLimit(@Body() dto: UpdateLimitDto, @Req() req): Promise<UserLimits> {
-    return this.limitsService.updateMonthlyLimit(req.user.userId, dto.limit);
+  async updateMonthlyLimit(
+    @Body() dto: UpdateLimitDto,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<UserLimits> {
+    return this.limitsService.updateMonthlyLimit(req.user.userId as string, dto.limit);
   }
 
   @Post('increase-request')
@@ -96,7 +109,7 @@ export class LimitsController {
   })
   async requestLimitIncrease(
     @Body() dto: LimitIncreaseRequestDto,
-    @Req() req,
+    @Req() req: AuthenticatedRequest,
   ): Promise<{ requestId: string; status: string; message: string; expiresAt: Date | undefined }> {
     return this.limitsService.requestLimitIncrease(req.user.userId, dto);
   }
@@ -111,7 +124,9 @@ export class LimitsController {
     description: 'Histórico retornado com sucesso',
     type: [LimitIncreaseRequest],
   })
-  async getLimitIncreaseRequests(@Req() req): Promise<LimitIncreaseRequest[]> {
+  async getLimitIncreaseRequests(
+    @Req() req: AuthenticatedRequest,
+  ): Promise<LimitIncreaseRequest[]> {
     return this.limitsService.getLimitIncreaseRequests(req.user.userId);
   }
 }

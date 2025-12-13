@@ -29,7 +29,7 @@ class UpdateBalanceDto {
   })
   @IsNumber({}, { message: 'O valor deve ser um número' })
   @IsNotEmpty({ message: 'O valor não pode estar vazio' })
-  amount: number;
+  amount!: number;
 
   @ApiProperty({
     description: 'Motivo da atualização do saldo',
@@ -37,7 +37,7 @@ class UpdateBalanceDto {
   })
   @IsString({ message: 'O motivo deve ser um texto' })
   @IsNotEmpty({ message: 'O motivo não pode estar vazio' })
-  reason: string;
+  reason!: string;
 }
 
 @ApiTags('balance')

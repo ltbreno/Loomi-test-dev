@@ -18,7 +18,7 @@ class BankingDetailsDto {
   })
   @IsString()
   @IsNotEmpty()
-  agency: string;
+  agency!: string;
 
   @ApiProperty({
     description: 'Número da conta',
@@ -26,7 +26,7 @@ class BankingDetailsDto {
   })
   @IsString()
   @IsNotEmpty()
-  accountNumber: string;
+  accountNumber!: string;
 
   @ApiProperty({
     description: 'Tipo da conta',
@@ -34,7 +34,7 @@ class BankingDetailsDto {
     example: AccountType.CHECKING,
   })
   @IsEnum(AccountType)
-  accountType: AccountType;
+  accountType!: AccountType;
 }
 
 export class RegisterDto {
@@ -44,7 +44,7 @@ export class RegisterDto {
   })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'Email do usuário',
@@ -52,7 +52,7 @@ export class RegisterDto {
     format: 'email',
   })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'Senha do usuário',
@@ -61,7 +61,7 @@ export class RegisterDto {
   })
   @IsString()
   @MinLength(8)
-  password: string;
+  password!: string;
 
   @ApiProperty({
     description: 'Endereço do usuário',
