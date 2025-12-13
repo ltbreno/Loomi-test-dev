@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
@@ -24,7 +18,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const { method, url, headers } = request;
     const correlationHeader = headers['x-correlation-id'];
     const correlationId = Array.isArray(correlationHeader)
-      ? correlationHeader[0] ?? uuidv4()
+      ? (correlationHeader[0] ?? uuidv4())
       : correlationHeader || uuidv4();
 
     // Add correlation ID to request
@@ -73,4 +67,3 @@ export class LoggingInterceptor implements NestInterceptor {
     );
   }
 }
-
