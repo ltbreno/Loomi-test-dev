@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { of } from 'rxjs';
 import { AuthService } from './auth.service';
-import { AxiosResponse } from 'axios';
+import { AxiosResponse, AxiosRequestHeaders } from 'axios';
 import { UserProfile } from '@loomi/shared';
 
 describe('AuthService', () => {
@@ -87,9 +87,9 @@ describe('AuthService', () => {
         data: mockUser,
         status: 200,
         statusText: 'OK',
-        headers: {},
+        headers: {} as AxiosRequestHeaders,
         config: {
-          headers: {},
+          headers: {} as AxiosRequestHeaders,
         },
       };
       jest.spyOn(httpService, 'post').mockReturnValue(of(response));
@@ -104,9 +104,9 @@ describe('AuthService', () => {
         data: null,
         status: 401,
         statusText: 'Unauthorized',
-        headers: {},
+        headers: {} as AxiosRequestHeaders,
         config: {
-          headers: {},
+          headers: {} as AxiosRequestHeaders,
         },
       };
       jest.spyOn(httpService, 'post').mockReturnValue(of(response));
