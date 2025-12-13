@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { isAxiosError } from 'axios';
+import { CreateUserRequest, UserProfile } from '@loomi/shared';
 
 export interface TokenPayload {
   sub: string;
@@ -27,25 +29,26 @@ export class AuthService {
     this.usersServiceUrl = this.configService.get('USERS_SERVICE_URL') || 'http://localhost:3001';
   }
 
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<UserProfile | null> {
     try {
       const response = await firstValueFrom(
-        this.httpService.post(`${this.usersServiceUrl}/api/users/validate`, {
+        this.httpService.post<UserProfile>(`${this.usersServiceUrl}/api/users/validate`, {
           email,
           password,
         }),
       );
       return response.data;
-    } catch (error) {
-      if (error.response?.status === 401) {
+    } catch (error: unknown) {
+      if (isAxiosError(error) && error.response?.status === 401) {
         return null;
       }
-      console.error('Error validating user:', error.message);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Error validating user:', message);
       return null;
     }
   }
 
-  async login(user: any): Promise<AuthTokens> {
+  async login(user: UserProfile): Promise<AuthTokens> {
     const payload: TokenPayload = {
       sub: user.id,
       email: user.email,
@@ -71,10 +74,10 @@ export class AuthService {
     };
   }
 
-  async register(userData: any): Promise<any> {
+  async register(userData: CreateUserRequest): Promise<UserProfile> {
     try {
       const response = await firstValueFrom(
-        this.httpService.post(`${this.usersServiceUrl}/api/users`, userData),
+        this.httpService.post<UserProfile>(`${this.usersServiceUrl}/api/users`, userData),
       );
       return response.data;
     } catch (error) {
@@ -84,7 +87,7 @@ export class AuthService {
 
   async refresh(refreshToken: string): Promise<AuthTokens> {
     try {
-      const payload = this.jwtService.verify(refreshToken, {
+      const payload = this.jwtService.verify<TokenPayload>(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
       });
 

@@ -21,6 +21,7 @@ import {
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Transaction } from './entities/transaction.entity';
+import { PaginatedResponse } from '@loomi/shared';
 
 @ApiTags('transactions')
 @ApiBearerAuth('JWT-auth')
@@ -198,7 +199,7 @@ export class TransactionsController {
     @Param('userId', ParseUUIDPipe) userId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-  ): Promise<any> {
+  ): Promise<PaginatedResponse<Transaction>> {
     return this.transactionsService.findByUserId(userId, page, limit);
   }
 

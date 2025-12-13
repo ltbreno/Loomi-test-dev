@@ -7,22 +7,30 @@ import { User } from './entities/user.entity';
 import { CacheService } from '../cache/cache.service';
 import { KafkaProducerService } from '../kafka/kafka-producer.service';
 import { S3Service } from './s3.service';
+import { CreateUserDto } from './dto/create-user.dto';
 
 describe('UsersService', () => {
   let service: UsersService;
   let repository: Repository<User>;
   let cacheService: CacheService;
 
-  const mockUser = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    name: 'Test User',
-    email: 'test@example.com',
-    password: 'hashedPassword',
-    balance: 1000,
-    isActive: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+  const buildMockUser = (): User => {
+    const user = new User();
+    user.id = '123e4567-e89b-12d3-a456-426614174000';
+    user.name = 'Test User';
+    user.email = 'test@example.com';
+    user.password = 'hashedPassword';
+    user.address = null;
+    user.profilePicture = null;
+    user.bankingDetails = null;
+    user.balance = 1000;
+    user.isActive = true;
+    user.createdAt = new Date();
+    user.updatedAt = new Date();
+    return user;
   };
+
+  const mockUser = buildMockUser();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -70,7 +78,7 @@ describe('UsersService', () => {
 
   describe('findOne', () => {
     it('should return a user from cache if available', async () => {
-      jest.spyOn(cacheService, 'get').mockResolvedValue(mockUser as any);
+      jest.spyOn(cacheService, 'get').mockResolvedValue(mockUser);
 
       const result = await service.findOne(mockUser.id);
 
@@ -81,7 +89,7 @@ describe('UsersService', () => {
 
     it('should return a user from database if not in cache', async () => {
       jest.spyOn(cacheService, 'get').mockResolvedValue(null);
-      jest.spyOn(repository, 'findOne').mockResolvedValue(mockUser as any);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mockUser);
       jest.spyOn(cacheService, 'set').mockResolvedValue();
 
       const result = await service.findOne(mockUser.id);
@@ -101,18 +109,20 @@ describe('UsersService', () => {
 
   describe('create', () => {
     it('should create a new user', async () => {
-      const createUserDto = {
+      const createUserDto: CreateUserDto = {
         name: 'New User',
         email: 'new@example.com',
         password: 'password123',
+        address: undefined,
+        bankingDetails: undefined,
       };
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(repository, 'create').mockReturnValue(mockUser as any);
-      jest.spyOn(repository, 'save').mockResolvedValue(mockUser as any);
+      jest.spyOn(repository, 'create').mockReturnValue(mockUser);
+      jest.spyOn(repository, 'save').mockResolvedValue(mockUser);
       jest.spyOn(cacheService, 'set').mockResolvedValue();
 
-      const result = await service.create(createUserDto as any);
+      const result = await service.create(createUserDto);
 
       expect(result).toBeDefined();
       expect(repository.save).toHaveBeenCalled();
@@ -120,21 +130,23 @@ describe('UsersService', () => {
     });
 
     it('should throw ConflictException if email already exists', async () => {
-      const createUserDto = {
+      const createUserDto: CreateUserDto = {
         name: 'New User',
         email: 'test@example.com',
         password: 'password123',
+        address: undefined,
+        bankingDetails: undefined,
       };
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(mockUser as any);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mockUser);
 
-      await expect(service.create(createUserDto as any)).rejects.toThrow(ConflictException);
+      await expect(service.create(createUserDto)).rejects.toThrow(ConflictException);
     });
   });
 
   describe('getBalance', () => {
     it('should return user balance', async () => {
-      jest.spyOn(cacheService, 'get').mockResolvedValue(mockUser as any);
+      jest.spyOn(cacheService, 'get').mockResolvedValue(mockUser);
 
       const result = await service.getBalance(mockUser.id);
 

@@ -6,6 +6,10 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Request } from 'express';
+
+type MetricsSnapshot = Record<string, number>;
+type HttpRequestWithRoute = Request & { route?: { path?: string } };
 
 // Simple in-memory metrics storage
 // In production, use Prometheus or similar
@@ -24,8 +28,8 @@ class MetricsStore {
     this.histogram.set(key, durations);
   }
 
-  getMetrics() {
-    const result = {};
+  getMetrics(): MetricsSnapshot {
+    const result: MetricsSnapshot = {};
 
     // Convert metrics to object
     this.metrics.forEach((value, key) => {
@@ -41,7 +45,7 @@ class MetricsStore {
       const p95 = sorted[Math.floor(sorted.length * 0.95)];
       const p99 = sorted[Math.floor(sorted.length * 0.99)];
 
-      result[`${key}_avg`] = avg.toFixed(2);
+      result[`${key}_avg`] = Number(avg.toFixed(2));
       result[`${key}_p50`] = p50;
       result[`${key}_p95`] = p95;
       result[`${key}_p99`] = p99;
@@ -60,8 +64,8 @@ export const metricsStore = new MetricsStore();
 
 @Injectable()
 export class MetricsInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest();
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+    const request = context.switchToHttp().getRequest<HttpRequestWithRoute>();
     const { method, route } = request;
     const startTime = Date.now();
 
