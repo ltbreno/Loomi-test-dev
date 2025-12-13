@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { TransactionStatus, TransactionType } from '@loomi/shared';
+import { TransactionMetadata, TransactionStatus, TransactionType } from '@loomi/shared';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('transactions')
@@ -86,7 +86,7 @@ export class Transaction {
     nullable: true,
   })
   @Column({ type: 'jsonb', nullable: true })
-  metadata: Record<string, any>;
+  metadata: TransactionMetadata | null;
 
   @ApiProperty({
     description: 'Data de criação da transação',

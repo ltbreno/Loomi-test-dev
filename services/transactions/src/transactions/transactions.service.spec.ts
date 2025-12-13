@@ -8,22 +8,29 @@ import { KafkaProducerService } from '../kafka/kafka-producer.service';
 import { UsersServiceClient } from './clients/users-service.client';
 import { CircuitBreakerService } from '../circuit-breaker/circuit-breaker.service';
 import { FallbackService } from '../circuit-breaker/fallback.service';
-import { TransactionStatus } from '@loomi/shared';
+import { TransactionStatus, TransactionType } from '@loomi/shared';
 
 describe('TransactionsService', () => {
   let service: TransactionsService;
   let repository: Repository<Transaction>;
   let usersClient: UsersServiceClient;
 
-  const mockTransaction = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    senderUserId: 'user1',
-    receiverUserId: 'user2',
-    amount: 100,
-    description: 'Test transfer',
-    status: TransactionStatus.COMPLETED,
-    createdAt: new Date(),
+  const buildMockTransaction = (): Transaction => {
+    const transaction = new Transaction();
+    transaction.id = '123e4567-e89b-12d3-a456-426614174000';
+    transaction.senderUserId = 'user1';
+    transaction.receiverUserId = 'user2';
+    transaction.amount = 100;
+    transaction.description = 'Test transfer';
+    transaction.status = TransactionStatus.COMPLETED;
+    transaction.type = TransactionType.TRANSFER;
+    transaction.metadata = null;
+    transaction.createdAt = new Date();
+    transaction.processedAt = new Date();
+    return transaction;
   };
+
+  const mockTransaction = buildMockTransaction();
 
   const mockUser = {
     id: 'user1',
@@ -104,7 +111,7 @@ describe('TransactionsService', () => {
 
   describe('findOne', () => {
     it('should return a transaction', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(mockTransaction as any);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mockTransaction);
 
       const result = await service.findOne(mockTransaction.id);
 
@@ -121,8 +128,8 @@ describe('TransactionsService', () => {
 
   describe('findByUserId', () => {
     it('should return paginated transactions', async () => {
-      const transactions = [mockTransaction];
-      jest.spyOn(repository, 'findAndCount').mockResolvedValue([transactions as any, 1]);
+      const transactions: Transaction[] = [mockTransaction];
+      jest.spyOn(repository, 'findAndCount').mockResolvedValue([transactions, 1]);
 
       const result = await service.findByUserId('user1', 1, 10);
 

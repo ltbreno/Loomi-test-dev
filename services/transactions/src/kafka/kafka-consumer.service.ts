@@ -1,6 +1,11 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Kafka, Consumer, EachMessagePayload } from 'kafkajs';
+import {
+  DomainEvent,
+  UserBankingDetailsUpdatedEvent,
+  UserBalanceUpdatedEvent,
+} from '@loomi/shared';
 
 @Injectable()
 export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
@@ -37,15 +42,19 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async handleMessage({ topic, partition, message }: EachMessagePayload) {
-    const event = JSON.parse(message.value?.toString() || '{}');
+    const event = this.parseEvent(message.value?.toString());
 
     console.log(`📨 Received event from ${topic}:`, {
-      eventType: event.eventType,
+      eventType: event?.eventType ?? 'unknown',
       partition,
       offset: message.offset,
     });
 
-    // Handle different event types
+    if (!event) {
+      console.log('⚠️ Unable to parse event payload');
+      return;
+    }
+
     switch (event.eventType) {
       case 'user.banking-details.updated':
         await this.handleBankingDetailsUpdated(event);
@@ -58,14 +67,25 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private async handleBankingDetailsUpdated(event: any) {
-    // Log the event for audit purposes
-    console.log(`User ${event.payload.userId} updated banking details`);
-    // In a real scenario, you might want to validate pending transactions
+  private parseEvent(rawValue?: string | Buffer | null): DomainEvent | null {
+    if (!rawValue) {
+      return null;
+    }
+
+    try {
+      const parsed = JSON.parse(rawValue.toString()) as DomainEvent;
+      return parsed;
+    } catch (error) {
+      console.error('Failed to parse Kafka message', error);
+      return null;
+    }
   }
 
-  private async handleBalanceUpdated(event: any) {
-    // Log the event for monitoring
+  private async handleBankingDetailsUpdated(event: UserBankingDetailsUpdatedEvent) {
+    console.log(`User ${event.payload.userId} updated banking details`);
+  }
+
+  private async handleBalanceUpdated(event: UserBalanceUpdatedEvent) {
     console.log(
       `User ${event.payload.userId} balance updated: ${event.payload.oldBalance} -> ${event.payload.newBalance}`,
     );

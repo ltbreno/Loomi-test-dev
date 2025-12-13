@@ -7,7 +7,7 @@ export interface INotificationService {
 }
 
 export interface IAnalyticsService {
-  trackEvent(eventName: string, properties: Record<string, any>): Promise<void>;
+  trackEvent(eventName: string, properties: Record<string, unknown>): Promise<void>;
   trackTransaction(transactionId: string, amount: number, status: string): Promise<void>;
 }
 
@@ -16,7 +16,7 @@ export interface IAuditService {
     userId: string,
     action: string,
     resource: string,
-    details: Record<string, any>,
+    details: Record<string, unknown>,
   ): Promise<void>;
 }
 
