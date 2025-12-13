@@ -24,35 +24,35 @@ export class PaginatedResponseDto<T> {
     description: 'Array de itens da página atual',
     isArray: true,
   })
-  data: T[];
+  data!: T[];
 
   @ApiProperty({
     description: 'Total de itens encontrados',
     example: 150,
     type: 'number',
   })
-  total: number;
+  total!: number;
 
   @ApiProperty({
     description: 'Página atual',
     example: 1,
     type: 'number',
   })
-  page: number;
+  page!: number;
 
   @ApiProperty({
     description: 'Número de itens por página',
     example: 10,
     type: 'number',
   })
-  limit: number;
+  limit!: number;
 
   @ApiProperty({
     description: 'Total de páginas disponíveis',
     example: 15,
     type: 'number',
   })
-  totalPages: number;
+  totalPages!: number;
 }
 
 // Mantém a interface original para uso interno
@@ -107,4 +107,3 @@ export interface TransactionRecord {
   createdAt: Date;
   processedAt: Date;
 }
-
