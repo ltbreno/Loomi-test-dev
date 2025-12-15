@@ -9,6 +9,7 @@ import { HealthModule } from './health/health.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { MetricsController } from './metrics/metrics.controller';
 import { LoggingInterceptor, MetricsInterceptor } from '@loomi/shared';
+import { UserForwardInterceptor } from './interceptors/user-forward.interceptor';
 
 @Module({
   imports: [
@@ -37,6 +38,10 @@ import { LoggingInterceptor, MetricsInterceptor } from '@loomi/shared';
     {
       provide: APP_INTERCEPTOR,
       useClass: MetricsInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: UserForwardInterceptor,
     },
   ],
 })
