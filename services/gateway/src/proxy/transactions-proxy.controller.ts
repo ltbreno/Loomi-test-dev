@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   ParseIntPipe,
   DefaultValuePipe,
+  Req,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -25,10 +26,17 @@ import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateTransactionRequest, PaginatedResponse, TransactionRecord } from '@loomi/shared';
 
+interface AuthenticatedRequest {
+  user: {
+    userId: string;
+    email: string;
+  };
+}
+
 @ApiTags('transactions')
 @Controller('transactions')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
 export class TransactionsProxyController {
   private readonly transactionsServiceUrl: string;
 
@@ -102,11 +110,18 @@ export class TransactionsProxyController {
   })
   async createTransaction(
     @Body() createTransactionDto: CreateTransactionRequest,
+    @Req() req: AuthenticatedRequest,
   ): Promise<TransactionRecord> {
     const response = await firstValueFrom(
       this.httpService.post<TransactionRecord>(
         `${this.transactionsServiceUrl}/api/transactions`,
         createTransactionDto,
+        {
+          headers: {
+            'x-user-id': req.user.userId,
+            'x-user-email': req.user.email,
+          },
+        },
       ),
     );
     return response.data;
@@ -137,10 +152,17 @@ export class TransactionsProxyController {
   })
   async getTransaction(
     @Param('transactionId', ParseUUIDPipe) transactionId: string,
+    @Req() req: AuthenticatedRequest,
   ): Promise<TransactionRecord> {
     const response = await firstValueFrom(
       this.httpService.get<TransactionRecord>(
         `${this.transactionsServiceUrl}/api/transactions/${transactionId}`,
+        {
+          headers: {
+            'x-user-id': req.user.userId,
+            'x-user-email': req.user.email,
+          },
+        },
       ),
     );
     return response.data;
@@ -191,10 +213,17 @@ export class TransactionsProxyController {
     @Param('userId', ParseUUIDPipe) userId: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Req() req: AuthenticatedRequest,
   ): Promise<PaginatedResponse<TransactionRecord>> {
     const response = await firstValueFrom(
       this.httpService.get<PaginatedResponse<TransactionRecord>>(
         `${this.transactionsServiceUrl}/api/transactions/user/${userId}?page=${page}&limit=${limit}`,
+        {
+          headers: {
+            'x-user-id': req.user.userId,
+            'x-user-email': req.user.email,
+          },
+        },
       ),
     );
     return response.data;
@@ -233,10 +262,18 @@ export class TransactionsProxyController {
   })
   async reverseTransaction(
     @Param('transactionId', ParseUUIDPipe) transactionId: string,
+    @Req() req: AuthenticatedRequest,
   ): Promise<TransactionRecord> {
     const response = await firstValueFrom(
       this.httpService.post<TransactionRecord>(
         `${this.transactionsServiceUrl}/api/transactions/${transactionId}/reverse`,
+        {},
+        {
+          headers: {
+            'x-user-id': req.user.userId,
+            'x-user-email': req.user.email,
+          },
+        },
       ),
     );
     return response.data;

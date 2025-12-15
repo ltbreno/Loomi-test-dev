@@ -8,6 +8,7 @@ import {
   UseInterceptors,
   UploadedFile,
   ParseUUIDPipe,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -24,6 +25,13 @@ import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+interface AuthenticatedRequest {
+  user: {
+    userId: string;
+    email: string;
+  };
+}
+
 // Multer file type
 interface MulterFile {
   fieldname: string;
@@ -37,7 +45,7 @@ interface MulterFile {
 @ApiTags('users')
 @Controller('users')
 @UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
 export class UsersProxyController {
   private readonly usersServiceUrl: string;
 
@@ -111,9 +119,14 @@ export class UsersProxyController {
       },
     },
   })
-  async getUser(@Param('userId', ParseUUIDPipe) userId: string) {
+  async getUser(@Param('userId', ParseUUIDPipe) userId: string, @Req() req: AuthenticatedRequest) {
     const response = await firstValueFrom(
-      this.httpService.get(`${this.usersServiceUrl}/api/users/${userId}`),
+      this.httpService.get(`${this.usersServiceUrl}/api/users/${userId}`, {
+        headers: {
+          'x-user-id': req.user.userId,
+          'x-user-email': req.user.email,
+        },
+      }),
     );
     return response.data;
   }
@@ -175,9 +188,15 @@ export class UsersProxyController {
   async updateUser(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Body() updateData: Record<string, unknown>,
+    @Req() req: AuthenticatedRequest,
   ) {
     const response = await firstValueFrom(
-      this.httpService.patch(`${this.usersServiceUrl}/api/users/${userId}`, updateData),
+      this.httpService.patch(`${this.usersServiceUrl}/api/users/${userId}`, updateData, {
+        headers: {
+          'x-user-id': req.user.userId,
+          'x-user-email': req.user.email,
+        },
+      }),
     );
     return response.data;
   }
@@ -231,6 +250,7 @@ export class UsersProxyController {
   async updateProfilePicture(
     @Param('userId', ParseUUIDPipe) userId: string,
     @UploadedFile() file: MulterFile,
+    @Req() req: AuthenticatedRequest,
   ) {
     const formData = new FormData();
     formData.append('profilePicture', new Blob([Buffer.from(file.buffer)]), file.originalname);
@@ -242,6 +262,8 @@ export class UsersProxyController {
         {
           headers: {
             'Content-Type': 'multipart/form-data',
+            'x-user-id': req.user.userId,
+            'x-user-email': req.user.email,
           },
         },
       ),
@@ -282,9 +304,17 @@ export class UsersProxyController {
     status: 401,
     description: 'Token de autenticação inválido ou ausente',
   })
-  async getBalance(@Param('userId', ParseUUIDPipe) userId: string) {
+  async getBalance(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
     const response = await firstValueFrom(
-      this.httpService.get(`${this.usersServiceUrl}/api/users/${userId}/balance`),
+      this.httpService.get(`${this.usersServiceUrl}/api/users/${userId}/balance`, {
+        headers: {
+          'x-user-id': req.user.userId,
+          'x-user-email': req.user.email,
+        },
+      }),
     );
     return response.data;
   }

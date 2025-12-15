@@ -6,9 +6,9 @@ services:
     image: postgres:16-alpine
     container_name: loomi-users-db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: users_db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${USERS_DB_NAME:-users_db}
     ports:
       - "5433:5432"
     volumes:
@@ -26,9 +26,9 @@ services:
     image: postgres:16-alpine
     container_name: loomi-transactions-db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: transactions_db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${TRANSACTIONS_DB_NAME:-transactions_db}
     ports:
       - "5434:5432"
     volumes:
@@ -36,7 +36,7 @@ services:
     networks:
       - loomi-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -135,21 +135,21 @@ services:
       PORT: 3001
       DATABASE_HOST: users-db
       DATABASE_PORT: 5432
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
-      DATABASE_NAME: users_db
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_NAME: ${USERS_DB_NAME:-users_db}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_TTL: 3600
       KAFKA_BROKERS: kafka:29092
       KAFKA_CLIENT_ID: users-service
       KAFKA_GROUP_ID: users-service-group
-      JWT_SECRET: your-super-secret-jwt-key-change-in-production
-      JWT_EXPIRES_IN: 15m
-      JWT_REFRESH_SECRET: your-super-secret-refresh-key-change-in-production
-      JWT_REFRESH_EXPIRES_IN: 7d
-      AWS_REGION: us-east-1
-      AWS_S3_BUCKET: loomi-profile-pictures
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
     networks:
       - loomi-network
     restart: unless-stopped
@@ -174,9 +174,9 @@ services:
       PORT: 3002
       DATABASE_HOST: transactions-db
       DATABASE_PORT: 5432
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
-      DATABASE_NAME: transactions_db
+      DATABASE_USER: ${POSTGRES_USER:-postgres}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_NAME: ${TRANSACTIONS_DB_NAME:-transactions_db}
       KAFKA_BROKERS: kafka:29092
       KAFKA_CLIENT_ID: transactions-service
       KAFKA_GROUP_ID: transactions-service-group
@@ -204,10 +204,10 @@ services:
       TRANSACTIONS_SERVICE_URL: http://transactions-service:3002
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      JWT_SECRET: your-super-secret-jwt-key-change-in-production
-      JWT_EXPIRES_IN: 15m
-      JWT_REFRESH_SECRET: your-super-secret-refresh-key-change-in-production
-      JWT_REFRESH_EXPIRES_IN: 7d
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
     networks:
       - loomi-network
     restart: unless-stopped
